@@ -1,5 +1,11 @@
 <template>
     <nav>
+
+        <v-snackbar top v-model="snackbar" :timeout="6000" color="success">
+            <span>Awesome! you added a new project.</span>
+            <v-btn flat color="white" @click="snackbar=false">Close</v-btn>
+        </v-snackbar>
+
         <v-toolbar app dark class="light-blue darken-4">
         <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
         <v-toolbar-title class="white--text">
@@ -8,6 +14,20 @@
         </v-toolbar-title>
 
         <v-spacer></v-spacer>
+
+        <v-menu offset-y>
+            <v-btn flat slot="activator" class="light-blue darken-4">
+                <v-icon>expand_more</v-icon>
+                <span>Menu</span>
+            </v-btn>
+            <v-list>
+                <v-list-tile v-for="link in links" :key="link.text" router :to="link.route">
+                    <v-list-tile-title>
+                        {{link.text}}
+                    </v-list-tile-title>
+                </v-list-tile>
+            </v-list>
+        </v-menu>
 
         <v-btn icon>
         <v-icon>accessible_forward</v-icon>
@@ -28,7 +48,7 @@
         absolute
         temporary
         >
-      <v-list class="pa-3">
+      <v-list>
         <v-list-tile avatar>
           <v-list-tile-avatar size=25 class="pr-3">
             <img src="/avatar-5.png">
@@ -39,6 +59,9 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
+      <v-flex class="mb-3 ml-5">
+          <Popup @projectAdded="snackbar=true"/>
+      </v-flex>
 
       <v-list class="pt-2">
         <v-divider></v-divider>
@@ -63,7 +86,9 @@
 </template>
 
 <script>
+import Popup from './Popup'
 export default {
+    components:{Popup},
     data(){
         return {
             drawer:false,
@@ -71,7 +96,8 @@ export default {
                 {icon: 'dashboard', text:'Dashboard', route: '/'},
                 {icon: 'folder', text:'My Projects', route: '/projects'},
                 {icon: 'person', text:'Team', route: '/team'},
-            ]
+            ],
+            snackbar:false,
         }
     }
 }
