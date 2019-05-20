@@ -53,7 +53,7 @@ export default {
                     content:this.content,
                     due:format(this.due, 'Do MMM YYY'),
                     person: 'Yoshi',
-                    status: 'Ongoing'
+                    status: 'ongoing'
                 }
 
                 db.collection('projects').add(project).then(() =>{
