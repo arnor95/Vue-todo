@@ -11,6 +11,7 @@ import 'firebase/firestore'
     messagingSenderId: "446858599963",
     appId: "1:446858599963:web:ab3c7d656644c46b"
   };
+
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();

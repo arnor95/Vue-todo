@@ -15,7 +15,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-menu offset-y>
+        <v-menu offset-y class="logged-in" style="display:none">
             <v-btn flat slot="activator" class="light-blue darken-4">
                 <v-icon>expand_more</v-icon>
                 <span>Menu</span>
@@ -37,8 +37,12 @@
         <v-icon>insert_emoticon</v-icon>
         </v-btn>
 
-        <v-btn flat class="light-blue darken-4">
+        <v-btn flat class="light-blue darken-4 logged-in" @click="logout()" style="display:none">
             <span>Sign Out</span>
+            <v-icon right>exit_to_app</v-icon>
+            </v-btn>
+         <v-btn flat class="light-blue darken-4 logged-out" @click="googleSignIn()" style="display:none">
+            <span>Sign In</span>
             <v-icon right>exit_to_app</v-icon>
             </v-btn>
         </v-toolbar>
@@ -49,7 +53,7 @@
         temporary
         >
       <v-list>
-        <v-list-tile avatar>
+        <v-list-tile avatar class="logged-in" style="display:none">
           <v-list-tile-avatar size=25 class="pr-3">
             <img src="/avatar-5.png">
           </v-list-tile-avatar>
@@ -59,6 +63,7 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
+      <v-btn class="mb-3 ml-5 logged-out" style="display:none" @click="googleSignIn()">Sign in with Google</v-btn>
       <v-flex class="mb-3 ml-5">
           <Popup @projectAdded="snackbar=true"/>
       </v-flex>
@@ -87,11 +92,12 @@
 
 <script>
 import Popup from './Popup'
+import firebase from 'firebase';
 export default {
-    components:{Popup},
-    data(){
+      data(){
         return {
             drawer:false,
+            
             links: [
                 {icon: 'dashboard', text:'Dashboard', route: '/'},
                 {icon: 'folder', text:'My Projects', route: '/projects'},
@@ -99,6 +105,31 @@ export default {
             ],
             snackbar:false,
         }
-    }
+    },
+    components:{Popup},
+    methods:{
+        googleSignIn() {
+            var provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).then((result) => {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            // The signed-in user info.
+            var user = result.user;
+            alert(user)
+
+            // ...
+            }).catch((err) => {
+            // Handle Errors here.
+            alert('oops' + err.message)
+            // The email of the user's account used.
+            // ...
+        })
+        },
+        logout() {
+          firebase.auth().signOut().then(() => {
+          alert('user signed out');
+        })
+        }  
+    },
+
 }
 </script>

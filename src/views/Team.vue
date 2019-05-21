@@ -44,6 +44,7 @@
     },
     components: {
      
-    }
+    },
+
   }
 </script>
