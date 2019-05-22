@@ -54,12 +54,12 @@
         >
       <v-list>
         <v-list-tile avatar class="logged-in" style="display:none">
-          <v-list-tile-avatar size=25 class="pr-3">
-            <img src="/avatar-5.png">
+          <v-list-tile-avatar size=25 class="pr-3" id="googleAvatar">
+            
           </v-list-tile-avatar>
 
           <v-list-tile-content>
-            <v-list-tile-title>Yoshi</v-list-tile-title>
+            <v-list-tile-title class="displayName"></v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -93,6 +93,10 @@
 <script>
 import Popup from './Popup'
 import firebase from 'firebase';
+const admin = require ('firebase-admin');
+const db = firebase.firestore();
+var provider = new firebase.auth.GoogleAuthProvider();
+
 export default {
       data(){
         return {
@@ -109,27 +113,34 @@ export default {
     components:{Popup},
     methods:{
         googleSignIn() {
-            var provider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(provider).then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            // The signed-in user info.
-            var user = result.user;
-            alert(user)
-
-            // ...
-            }).catch((err) => {
-            // Handle Errors here.
-            alert('oops' + err.message)
-            // The email of the user's account used.
-            // ...
-        })
+              const googleAvatar = document.querySelector('#googleAvatar');
+              firebase.auth().signInWithPopup(provider).then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                // The signed-in user info.
+                var user = result.user;
+                db.collection('users').doc(user.uid).set({
+                email: user.email,
+                phone: user.phoneNumber,
+                avatar: user.photoURL,
+                name: user.displayName
+                })
+                //Set user image
+    
+                // ...
+                }).catch((err) => {
+                // Handle Errors here.
+                alert('oops' + err.message)
+                // The email of the user's account used.
+                // ...
+            })
         },
-        logout() {
-          firebase.auth().signOut().then(() => {
-          alert('user signed out');
-        })
-        }  
-    },
+      logout() {
+      firebase.auth().signOut().then(() => {
+        admin.auth().revokeRefreshTokens(firebase.auth().currentUser.uid)
+        alert('user signed out');
+      })},
+    
+        }
 
 }
 </script>
